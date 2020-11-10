@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Sign In Screen</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_in_your_account">Sign In Your Account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_in">Sign In</string>
+
+</resources>
