@@ -67,7 +67,7 @@
         app:layout_constraintTop_toBottomOf="@+id/login_welcome_text" />
 
     <EditText
-        android:id="@+id/login_email_edit"
+        android:id="@+id/login_username_edit"
         android:layout_width="353dp"
         android:layout_height="40dp"
         android:layout_marginStart="32dp"
@@ -78,7 +78,7 @@
         android:background="@color/colorPrimaryDarker"
         android:ems="10"
         android:fontFamily="@font/poppins_regular"
-        android:hint="@string/email_hint"
+        android:hint="@string/username_hint"
         android:inputType="textEmailAddress"
         android:paddingLeft="12dp"
         android:textColor="@color/colorPrimary"
@@ -112,7 +112,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_email_edit"
+        app:layout_constraintTop_toBottomOf="@+id/login_username_edit"
         tools:ignore="MissingConstraints" />
 
     <TextView

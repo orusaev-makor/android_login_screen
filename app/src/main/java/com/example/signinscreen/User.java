@@ -1,14 +1,17 @@
 package com.example.signinscreen;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
-    private String name;
-    private String email;
+    @SerializedName("user_details")
+    private UserDetails userDetails;
 
-    public String getName() {
-        return name;
+    public UserDetails getUserDetails() {
+        return userDetails;
     }
 
-    public String getEmail() {
-        return email;
+    public void setUserDetails(UserDetails userDetails) {
+        this.userDetails = userDetails;
     }
+
 }
