@@ -12,7 +12,8 @@
         android:layout_height="33dp"
         android:layout_marginTop="250dp"
         android:text="Next Activity...."
-        android:textColor="@color/colorPrimary"
+
+        android:textColor="@color/textColor"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
@@ -26,12 +27,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:width="300dp"
-        android:fontFamily="@font/poppins_regular"
         android:text="@string/sign_out"
-        android:textColor="@color/colorPrimaryDark"
-        app:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/textColor"
+        app:backgroundTint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

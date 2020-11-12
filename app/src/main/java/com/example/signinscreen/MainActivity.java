@@ -2,15 +2,15 @@ package com.example.signinscreen;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import okhttp3.OkHttpClient;
@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 //    private String BASE_URL = "http://10.0.2.2:3000/";
     private String BASE_URL = "http://api-pnl.enigma-securities.io";
     private static String token;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (!response.isSuccessful()) {
+                    System.out.println( "Code: " + response.code() + "Error: " + response.message());
                     loginErrorMsg.setText("Wrong Credentials");
                     return;
                 }
@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                System.out.println( "t.getMessage(): " + t.getMessage());
+
                 Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 loginErrorMsg.setText(t.getMessage());
             }
