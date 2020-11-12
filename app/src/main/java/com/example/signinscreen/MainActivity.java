@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,13 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Moving to previous sing in layout + setting up login listener (again???) after successful logout:
-                setContentView(R.layout.activity_main);
-                findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleLogin();
-                    }
-                });
+                handleBackToSigninScreen();
             }
 
             @Override
@@ -136,8 +131,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleForgotPassword() {
+        setContentView(R.layout.forgot_password);
+
+        findViewById(R.id.forgot_password_send_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleSendForgotPasswordEmail();
+            }
+        });
+
+        findViewById(R.id.forgot_password_back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleBackToSigninScreen();
+            }
+        });
+    }
+
+    private void handleBackToSigninScreen() {
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleLogin();
+            }
+        });
+
+        findViewById(R.id.login_forgot_password).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleForgotPassword();
+            }
+        });
+    }
+
+    private void handleSendForgotPasswordEmail() {
         EditText username = findViewById(R.id.login_username_edit);
         String user = username.getText().toString();
+        TextView resetErrorMsg = findViewById(R.id.forgot_password_error_message);
+        Button sendBtn = findViewById(R.id.forgot_password_send_button);
+
+        resetErrorMsg.setText("");
 
         HashMap<String, String> map = new HashMap<>();
         map.put("username", user);
@@ -147,13 +181,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(!response.isSuccessful()) {
-                    // TODO: check if forgot password error should be presented in TextView id: "login_error_message" ?
-                    Toast.makeText(MainActivity.this,
-                            "Wrong username", Toast.LENGTH_LONG).show();
+                    resetErrorMsg.setText("Wrong Username");
                     return;
                 }
-                Toast.makeText(MainActivity.this,
-                        "Forgot password email sent to user: " + user, Toast.LENGTH_LONG).show();
+                sendBtn.setText("Sent!");
             }
 
             @Override

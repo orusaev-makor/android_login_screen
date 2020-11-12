@@ -7,5 +7,8 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="send">Send</string>
+    <string name="back">Back</string>
 
 </resources>
