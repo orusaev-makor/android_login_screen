@@ -3,16 +3,15 @@ package com.example.signinscreen;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -49,19 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleLogin();
-            }
-        });
-
-        findViewById(R.id.login_forgot_password).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleForgotPassword();
-            }
-        });
+        setSigninScreen();
     }
 
     private void handleLogin() {
@@ -86,16 +72,10 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Moving to next layout + setting up logout listener after successful login:
+                // After successful login: moving to next layout + setting up logout listener
                 token = response.body().getUserDetails().getToken();
-                setContentView(R.layout.activity_next);
-
-                findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleLogout(token);
-                    }
-                });
+                List<User> users = response.body().getUsers();
+                setNextView(users, token);
             }
 
             @Override
@@ -104,6 +84,67 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 loginErrorMsg.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void setNextView(List<User> users, String token) {
+        setContentView(R.layout.activity_next);
+        TextView usersListText = findViewById(R.id.next_activity_text);
+
+        for(User user : users) {
+            int id =  user.getId();
+
+            String content = "";
+            content += "ID: " + id + "\n";
+            content += "Username: " + user.getUsername() + "\n\n";
+            usersListText.append(content);
+
+            usersListText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleGetHistoricalPnl(token, id);
+                }
+            });
+        }
+
+        findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleLogout(token);
+            }
+        });
+    }
+
+    private void handleGetHistoricalPnl(String token, int id) {
+        String bearerAuth = "bearerAuth: " + token;
+
+        Call<ArrayList<HistoricalPnl>> call = retrofitInterface.getHistoricalPnl(bearerAuth, 3);
+
+        call.enqueue(new Callback<ArrayList<HistoricalPnl>>() {
+            @Override
+            public void onResponse(Call<ArrayList<HistoricalPnl>> call, Response<ArrayList<HistoricalPnl>> response) {
+                if (!response.isSuccessful()) {
+                    System.out.println( "Code: " + response.code() + "Error: " + response.message());
+                    return;
+                }
+
+                ArrayList<HistoricalPnl> pnl = response.body();
+                for (HistoricalPnl historicalPnl : pnl) {
+                    int month = historicalPnl.getMonth();
+                    int year = historicalPnl.getYear();
+                    float salesPnl = historicalPnl.getPnl();
+
+                    // TODO: present result after successful request
+                    System.out.println(month + "/" + year + " // sales pnl - " + salesPnl);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<HistoricalPnl>> call, Throwable t) {
+                System.out.println("t.getMessage():  "  + t.getMessage());
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -119,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Moving to previous sing in layout + setting up login listener (again???) after successful logout:
-                handleBackToSigninScreen();
+                // Moving to previous sing in layout after successful logout:
+                setSigninScreen();
             }
 
             @Override
@@ -143,12 +184,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.forgot_password_back_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleBackToSigninScreen();
+                setSigninScreen();
             }
         });
     }
 
-    private void handleBackToSigninScreen() {
+    private void setSigninScreen() {
         setContentView(R.layout.activity_main);
         findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
             @Override
